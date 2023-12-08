@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with AI Trainer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"], button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h3>Chat with AI Trainer</h3>
+        <form method="POST" action="/send_message_to_get_user_detail">
+            <input type="text" name="human_input" placeholder="Enter You Customer Id">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+{% if response_from_llm %}
+    <p>{{ response_from_llm }}</p>
+{% endif %}
+</body>
+</html>

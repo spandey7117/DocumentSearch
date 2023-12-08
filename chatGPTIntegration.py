@@ -1,13 +1,41 @@
 from PyPDF2 import PdfReader
+from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 import os
 from docx import Document
 from langchain.chains.question_answering import load_qa_chain
+from dotenv import find_dotenv, load_dotenv
 from langchain.llms import OpenAI
+from langchain.agents import *
+from langchain.sql_database import SQLDatabase
+from langchain.chat_models import ChatOpenAI
+import psycopg2
 
-os.environ["OPENAI_API_KEY"] = "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"
+
+load_dotenv(find_dotenv())
+os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+
+def connect_to_db():
+    db = SQLDatabase.from_uri(f"postgresql://naardic:password@localhost:5432/template1")
+    return db
+
+
+def chat_with_db(query):
+    print(query)
+    db = SQLDatabase.from_uri(f"postgresql://naardic:password@localhost:5432/template1")
+    llm = OpenAI(model_name="gpt-4")
+    toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+    agent_executor = create_sql_agent(
+        llm=llm,
+        toolkit=toolkit,
+        verbose=True,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    )
+    result = agent_executor.run(query)
+    return result
 
 
 def read_pdf(file_path):

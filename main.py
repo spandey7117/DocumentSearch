@@ -2,7 +2,8 @@ from flask import Flask, render_template, send_from_directory, request, g
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from chatGPTIntegration import read_pdf, read_doc, read_txt, respond_to_query
+from DBIntegration import get_user_detail
+from chatGPTIntegration import read_pdf, read_doc, read_txt, respond_to_query, chat_with_db
 
 load_dotenv(find_dotenv())
 app = Flask(__name__)
@@ -14,9 +15,9 @@ def upload():
     return render_template("upload.html")
 
 
-@app.route("/error")
-def error():
-    return render_template("error.html")
+@app.route("/aiTrainer")
+def ai_trainer():
+    return render_template("aiTrainer.html")
 
 
 @app.route("/search")
@@ -50,10 +51,6 @@ def upload_file():
         return render_template('upload.html', message=message, is_upload_success=is_upload_success, file_path=file_path)
 
 
-def get_response_from_file(human_input):
-    pass
-
-
 @app.route('/send_message', methods=['POST'])
 def send_message():
     human_input = request.form['human_input']
@@ -71,6 +68,19 @@ def send_message():
     return render_template('upload.html', is_upload_success=True, file_path=file_path,
                            response_from_llm=response_from_llm)
 
+
+@app.route('/send_message_for_db', methods=['POST'])
+def send_message_for_db():
+    human_input = request.form['human_input']
+    response_from_llm = chat_with_db(human_input)
+    return render_template('search.html', response_from_llm=response_from_llm)
+
+
+@app.route('/send_message_to_get_user_detail', methods=['POST'])
+def send_message_to_get_user_detail():
+    human_input = request.form['human_input']
+    response_from_llm = get_user_detail(human_input)
+    return render_template('aiTrainer.html', response_from_llm=response_from_llm)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
